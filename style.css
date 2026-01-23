@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: #0a0b10;
+    cursor: none; /* On cache le curseur pour mettre le nôtre */
+}
+
+.cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: #00f5d4;
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(0, 245, 212, 0.05) 0%, transparent 50%),
+        linear-gradient(#0f1117 1px, transparent 1px), 
+        linear-gradient(90deg, #0f1117 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+/* Effet de scanline sur le titre console */
+font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enzo Ebendinger | Portfolio SISR</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --bg-color: #020617;
+            --text-color: #f8fafc;
+            --card-bg: #060010;
+            --border-color: #392e4e;
+            --accent: #00f5d4;
+        }
+
+        .light-mode {
+            --bg-color: #f1f5f9;
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1;
+            --accent: #0ea5e9;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: 'Inter', sans-serif; 
+            transition: all 0.3s ease;
+        }
+
+        /* --- STYLES REFLECTIVE CARD (BADGE) --- */
+        .reflective-card-container {
+            position: relative;
+            width: 300px;
+            height: 460px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #1a1a1a;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            isolation: isolate;
+            margin: 0 auto;
+        }
+
+        .reflective-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.2) scaleX(-1);
+            filter: saturate(var(--saturation, 0)) blur(12px) url(#metallic-displacement);
+            opacity: 0.8;
+            z-index: 0;
+        }
+
+        .reflective-sheen {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, rgba(255,255,255,0.3) 100%);
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        .reflective-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- BENTO GRID STYLES --- */
+        .card-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .magic-bento-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- COMPOSANT : REFLECTIVE BADGE ---
+        const ReflectiveCard = ({ isDarkMode }) => {
+            const videoRef = useRef(null);
+            
+            useEffect(() => {
+                let stream = null;
+                const startWebcam = async () => {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                        if (videoRef.current) videoRef.current.srcObject = stream;
+                    } catch (err) { console.error('Webcam access denied'); }
+                };
+                startWebcam();
+                return () => stream?.getTracks().forEach(t => t.stop());
+            }, []);
+
+            return (
+                <div className="reflective-card-container" style={{"--saturation": isDarkMode ? 0 : 1}}>
+                    <svg style={{position:'absolute', width:0, height:0}}>
+                        <filter id="metallic-displacement">
+                            <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="noise" />
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" />
+                        </filter>
+                    </svg>
+                    <video ref={videoRef} autoPlay playsInline muted className="reflective-video" />
+                    <div className="reflective-sheen" />
+                    <div className="reflective-content">
+                        <div className="flex justify-between border-b border-white/20 pb-4">
+                            <div className="bg-white/10 px-2 py-1 rounded text-[8px] font-bold">SECURE ACCESS</div>
+                            <div className="opacity-50">●</div>
+                        </div>
+                        <div className="text-center py-8">
+                            <h2 className="text-xl font-bold tracking-widest uppercase">E. EBENDINGER</h2>
+                            <p className="text-[10px] opacity-60 tracking-[0.3em]">SISR SPECIALIST</p>
+                        </div>
+                        <div className="border-t border-white/20 pt-4 flex justify-between items-end">
+                            <div className="text-[9px] font-mono opacity-50">ID: 67-SISR-2026</div>
+                            <div className="w-8 h-8 opacity-30">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM12 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- COMPOSANT : BENTO CARD ---
+        const BentoCard = ({ title, desc, label }) => (
+            <div className="magic-bento-card">
+                <div className="space-y-2">
+                    <span className="text-[10px] font-bold text-cyan-500 uppercase">{label}</span>
+                    <h3 className="text-xl font-bold">{title}</h3>
+                    <p className="text-sm text-slate-400 italic">{desc}</p>
+                </div>
+            </div>
+        );
+
+        // --- APP PRINCIPALE ---
+        const App = () => {
+            const [view, setView] = useState('home');
+            const [isDarkMode, setIsDarkMode] = useState(true);
+
+            const toggleTheme = () => {
+                setIsDarkMode(!isDarkMode);
+                document.body.classList.toggle('light-mode');
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    <nav className="p-6 border-b border-white/5 flex justify-between items-center sticky top-0 bg-inherit z-50">
+                        <div className="font-bold text-sm tracking-tighter">ENZO.EBENDINGER <span className="text-cyan-500">_</span></div>
+                        <div className="flex gap-6 items-center text-[10px] font-bold uppercase tracking-widest">
+                            <button onClick={() => setView('home')} className={view === 'home' ? 'text-cyan-500' : ''}>Profil</button>
+                            <button onClick={() => setView('projets')} className={view === 'projets' ? 'text-cyan-500' : ''}>Projets</button>
+                            <button onClick={() => setView('about')} className={view === 'about' ? 'text-cyan-500' : ''}>À Propos</button>
+                            <button onClick={toggleTheme} className="ml-4">{isDarkMode ? '🌙' : '☀️'}</button>
+                        </div>
+                    </nav>
+
+                    <main className="flex-grow max-w-5xl mx-auto w-full p-8 py-12">
+                        {view === 'home' && (
+                            <section className="space-y-12 animate-[fadeIn_0.5s]">
+                                <h1 className="text-8xl font-black italic leading-none uppercase tracking-tighter">
+                                    Digital <br/> <span className="opacity-20">Architect</span>
+                                </h1>
+                                <div className="max-w-md space-y-6">
+                                    <p className="text-slate-400 text-sm leading-relaxed">
+                                        Expert en solutions réseaux et systèmes. Spécialisation SISR 2026. 
+                                        Conception d'infrastructures résilientes et sécurisées.
+                                    </p>
+                                    <a href="EBENDINGER Enzo.pdf" download className="inline-block bg-white text-black px-8 py-3 font-bold text-[10px] uppercase">Télécharger CV</a>
+                                </div>
+                            </section>
+                        )}
+
+                        {view === 'projets' && (
+                            <section className="space-y-12 animate-[fadeIn_0.5s]">
+                                <h2 className="text-4xl font-black uppercase italic tracking-tighter">Réalisations_</h2>
+                                <div className="card-grid">
+                                    <BentoCard title="VLAN Segmentation" desc="Architecture réseau sécurisée sous Cisco Packet Tracer." label="Réseau" />
+                                    <BentoCard title="SecNum ANSSI" desc="Certification de cybersécurité opérationnelle." label="Cyber" />
+                                    <BentoCard title="Windows Server" desc="Déploiement d'Active Directory et GPO." label="Système" />
+                                </div>
+                            </section>
+                        )}
+
+                        {view === 'about' && (
+                            <section className="grid md:grid-cols-2 gap-12 items-center animate-[fadeIn_0.5s]">
+                                <div className="space-y-6">
+                                    <h2 className="text-4xl font-black uppercase italic">Identity_Check</h2>
+                                    <p className="text-slate-400 text-sm">
+                                        Mon badge d'accès virtuel utilise un rendu métallique en temps réel. 
+                                        Cela symbolise ma vision de l'informatique : une fusion entre 
+                                        la sécurité physique et l'innovation logicielle.
+                                    </p>
+                                    <div className="p-4 border border-white/10 rounded-lg mono text-[10px] space-y-2">
+                                        <p>> LOCATION: STRASBOURG, FR</p>
+                                        <p>> STATUS: ACTIVE_STUDENT</p>
+                                        <p>> SPECIALTY: SISR / SECURITY</p>
+                                    </div>
+                                </div>
+                                <ReflectiveCard isDarkMode={isDarkMode} />
+                            </section>
+                        )}
+
+                        {view === 'legal' && (
+                            <section className="space-y-8 animate-[fadeIn_0.5s]">
+                                <h2 className="text-2xl font-black uppercase italic">Mentions Légales</h2>
+                                <div className="p-8 border border-white/10 rounded-2xl text-xs text-slate-400 space-y-4">
+                                    <p><strong>Éditeur :</strong> Enzo Ebendinger</p>
+                                    <p><strong>Hébergement :</strong> Plateforme académique BTS SIO 2026.</p>
+                                    <p><strong>Propriété :</strong> Les codes et designs sont protégés par le droit d'auteur.</p>
+                                </div>
+                            </section>
+                        )}
+                    </main>
+
+                    <footer className="p-12 border-t border-white/5 flex justify-between items-center opacity-40">
+                        <span className="text-[10px] font-bold tracking-widest">© 2026 ENZO EBENDINGER</span>
+                        <button onClick={() => setView('legal')} className="text-[9px] uppercase hover:text-cyan-500 transition">Mentions Légales</button>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
